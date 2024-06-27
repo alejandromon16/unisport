@@ -54,17 +54,10 @@
 
         // Get access to the camera
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function(stream) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
                 video.srcObject = stream;
                 video.play();
-            })
-            .catch(function(err) {
-                console.error("Error accessing the camera: " + err);
-                alert("No se puede acceder a la cámara. Por favor, asegúrese de que los permisos están habilitados.");
             });
-        } else {
-            alert("La API getUserMedia no es compatible con este navegador.");
         }
 
         // Capture photo
@@ -73,7 +66,6 @@
             context.drawImage(video, 0, 0, 320, 240);
             const dataURL = canvas.toDataURL('image/png');
             imageDataInput.value = dataURL;
-            canvas.style.display = 'none'; // Hide canvas after capturing
         });
     </script>
 </body>
