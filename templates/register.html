@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/register.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-brand">
+            <h1>UniSport</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+    <div class="register-container">
+        <div class="register-box">
+            <h1>Registrar Jugador</h1>
+            <form method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    {{ form.name(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <label for="team">Equipo</label>
+                    {{ form.team(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <label for="career">Carrera</label>
+                    {{ form.career(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <label for="imageData">Foto</label>
+                    <input type="hidden" id="imageData" name="imageData">
+                    <video id="video" width="320" height="240" autoplay></video>
+                    <button type="button" id="capture">Capturar Foto</button>
+                    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+                </div>
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const imageDataInput = document.getElementById('imageData');
+
+        // Get access to the camera
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+            });
+        }
+
+        // Capture photo
+        captureButton.addEventListener('click', function() {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, 320, 240);
+            const dataURL = canvas.toDataURL('image/png');
+            imageDataInput.value = dataURL;
+        });
+    </script>
+</body>
+</html>

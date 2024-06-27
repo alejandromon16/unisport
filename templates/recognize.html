@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconocer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/recognize.css') }}">
+</head>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    body {
+        background: url("{{ url_for('static', filename='pasto.jpg') }}") no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+<body>
+    <div class="navbar">
+        <div class="navbar-brand">
+            <h1>UniSport</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+    <div class="recognize-container">
+        <div class="recognize-box">
+            <h1>Reconocer</h1>
+            <video id="video" class="w-100" autoplay></video>
+            <div class="text-center mt-2">
+                <button id="recognizeButton" class="btn btn-primary">Recognize</button>
+            </div>
+            <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+            <form id="recognizeForm" method="POST" action="{{ action_url }}" class="mt-2">
+                <input type="hidden" id="imageData" name="imageData">
+                <button type="submit" id="submitButton" class="btn btn-success btn-block" style="display: none;">Submit</button>
+            </form>
+            {% if message %}
+                <div class="text-center mt-2">
+                    <p>{{ message }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const recognizeButton = document.getElementById('recognizeButton');
+        const imageData = document.getElementById('imageData');
+        const submitButton = document.getElementById('submitButton');
+
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.play();
+            } catch (err) {
+                console.error("Error accessing the camera: " + err);
+            }
+        }
+
+        startCamera();
+
+        recognizeButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/png');
+            imageData.value = dataURL;
+            submitButton.click();
+        });
+    </script>
+</body>
+</html>
